@@ -1,4 +1,5 @@
 #coding: utf-8
+from __future__ import division
 import pygame
 from pygame.locals import *
 from random  import randint
@@ -9,6 +10,8 @@ room_size = 25
 screen_size = 800
 White = (255,255,255)
 Black  = (0,0,0)
+Red = (255,0,0)
+Path = []
 
 class Room() :
     def __init__(self,x,y) :
@@ -62,21 +65,42 @@ def create_maze(room,next_room) :
             next_room = stack.pop()
             if len(stack) == 0 :
                 break
+def go_out(screen,r_color,room1,room2,size) :
+    px , py = 25 + room1.x*size + size/2 , 25 + room1.y*size + size/2
+    tx , ty = 25 + room2.x*size + size/2 , 25 + room2.y*size + size/2
+    pygame.draw.line(screen,r_color,(px,py),(tx,ty))
+
+def backtrack_maze(room_list,room,screen) :
+    change = [[0,-1],[1,0],[0,1],[-1,0]]
+    Path.append(room)
+    room.visited = False
+    if room.x == 29 and  room.y == 29 :
+        for index , item in enumerate(Path) :
+            if index == len(Path) - 1 :
+                break
+            go_out(screen,Red,item,Path[index+1],room_size)
+    for index , item in enumerate(change) :
+        tx , ty = room.x + item[0] , room.y + item[1]
+        if tx in range(0,room_m)  and ty in range(0,room_n) and ( room.walls[index] == 0 )  and (room_list[tx][ty].visited == True ):
+            backtrack_maze(room_list,room_list[tx][ty],screen)
+    Path.pop()
+    room.visited = True
 
 if __name__ == '__main__' :
     pygame.init()
     screen=pygame.display.set_mode([screen_size,screen_size])
     screen.fill(White)
-    clock=pygame.time.Clock()
     room = create_map(room_m,room_n)
     start_point = [0,0]
-    start_room = room[0][0]
-    create_maze(room,start_room)
+    create_maze(room,room[0][0])
     for i in range(room_m) :
         for j in range(room_n) :
             start_point[0] = 25 + i * room_size
             start_point[1] = 25 + j * room_size
             draw_line(screen,start_point,room[i][j].walls,room_size,Black)
+    backtrack_maze(room,room[0][0],screen)
+    pygame.draw.circle(screen,Red,[25+12,25+12],5,5)
+    pygame.draw.circle(screen,Red,[775-12,775-12],5,5)
     while True :
         for event in pygame.event.get():
             if event.type==QUIT:
