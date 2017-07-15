@@ -43,3 +43,4 @@ def str2float(s) :
     return (float)(reduce(add,map(char2int,get(s)[0])))/(10**get(s)[1])
 
 print str2float('123.1234')
+print type(str2float('133454.34543'))

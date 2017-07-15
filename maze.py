@@ -99,8 +99,8 @@ if __name__ == '__main__' :
             start_point[1] = 25 + j * room_size
             draw_line(screen,start_point,room[i][j].walls,room_size,Black)
     backtrack_maze(room,room[0][0],screen)
-    pygame.draw.circle(screen,Red,[25+12,25+12],5,5)
-    pygame.draw.circle(screen,Red,[775-12,775-12],5,5)
+    pygame.draw.circle(screen,Red,[25+12,25+12],6,6)
+    pygame.draw.circle(screen,Red,[775-12,775-12],6,6)
     while True :
         for event in pygame.event.get():
             if event.type==QUIT:

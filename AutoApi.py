@@ -48,6 +48,14 @@ class Api() :
                 self.static_content(fapi)
                 fapi.close()
 
+class Models() :
+    def __init__(self,path,models) :
+        self.path = path
+        self.models = models
+    def get_models(self) :
+        print self.path
+        print self.models
+
 def find_init() :
     API = []
     for root , dirs , files in os.walk(".") :
@@ -83,9 +91,34 @@ def find_init() :
         sys.exit(0)
     return API
 
+def find_models() :
+    models = []
+    path = '1'
+    for root , dirs , files in os.walk(".") :
+        for each in files :
+            if each == 'models.py' :
+                path = root
+                init = open(root+"/"+each,'r')
+                lines = init.readlines()
+                for line in lines :
+                    if line[:5] == 'class' :
+                        item = ''
+                        for i in line[6:] :
+                            flag = 0
+                            if i != ' ' :
+                                flag = 1
+                            if i == "(" or i == ':' :
+                                break
+                            if flag == 1:
+                                item += i
+                        models.append(item)
+    Model = Models(path,models)
+    return Model
 
 if  __name__ == '__main__' :
     api  = find_init()
+    model = find_models()
+    model.get_models()
     for each in api :
         each.generate_api()
         each.get_blueprint()
