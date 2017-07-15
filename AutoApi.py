@@ -11,11 +11,31 @@ class Api() :
 
     def static_content(self,fapi) :
         OutputList = \
-            ['from flask import jsonify , g , request , current_app , \n',
+            ['from flask import jsonify , g , request , current_app \n',
             'from .. import                \n',
             'from .. import db             \n']
         fapi.writelines(OutputList)
 
+    def get_blueprint(self) :
+        root  = self.root
+        api = self.api
+        for  each in root :
+            os.chdir(root)
+            init = open("__init__.py","r")
+            lines = init.readlines()
+            for index , line in enumerate(lines) :
+                if "Blueprint" in line :
+                    temp  = lines[index+1]
+                    blue = ''
+                    flag = 0
+                    for j , i in enumerate(temp) :
+                        if temp[j] == '\'' and flag != 0 :
+                            break
+                        if flag == 1  :
+                            blue += i
+                        if i == '\'' :
+                            flag += 1
+                    self.blue = blue
 
     def generate_api(self) :
         root = self.root
@@ -68,5 +88,6 @@ if  __name__ == '__main__' :
     api  = find_init()
     for each in api :
         each.generate_api()
+        each.get_blueprint()
 
 
