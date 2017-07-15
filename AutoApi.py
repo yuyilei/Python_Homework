@@ -20,9 +20,11 @@ class Api() :
     def generate_api(self) :
         root = self.root
         api = self.api
+        print root
         for each in root :
+            os.chdir(root)
             for item in api :
-                fapi = open(root+"/"+item+".py","w+")
+                fapi = open(item+".py","w+")
                 self.static_content(fapi)
                 fapi.close()
 
@@ -40,7 +42,7 @@ def find_init() :
                         _api = re.split(",",line)
                         first = _api[0].split()[-1]
                         api_ = _api[1:]
-                        api_ = api_[:-2]
+                        api_ = api_[:-1]
                         api_.append(first)
                         if  flag == 1 :
                             next_ = lines[index+1][:-1]
@@ -52,7 +54,8 @@ def find_init() :
                             a =  a.replace(' ','')
                             api.append(a)
                         api = list(set(api))
-                        item = Api(root,api)
+                        path = os.getcwd() + root[1:]
+                        item = Api(path,api)
                         API.append(item)
                 init.close()
     if len(API) == 0 :
