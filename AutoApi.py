@@ -123,4 +123,3 @@ if  __name__ == '__main__' :
         each.generate_api()
         each.get_blueprint()
 
-
