@@ -4,20 +4,34 @@ import os
 import sys
 import re
 
-def static_content() :
-    OutputList = \
-        ['from flask import jsonify , g , request\n',
-         'from .. import                \n',
-         'from .. import db             \n']
-    fapi.writelines(OutputList)
+class Api() :
+    def __init__(self,root,api) :
+        self.root = root
+        self.api = api
+
+    def static_content(self,fapi) :
+        OutputList = \
+            ['from flask import jsonify , g , request , current_app , \n',
+            'from .. import                \n',
+            'from .. import db             \n']
+        fapi.writelines(OutputList)
+
+
+    def generate_api(self) :
+        root = self.root
+        api = self.api
+        for each in root :
+            for item in api :
+                fapi = open(root+"/"+item+".py","w+")
+                self.static_content(fapi)
+                fapi.close()
 
 def find_init() :
-    roots = []
-    apis = []
+    API = []
     for root , dirs , files in os.walk(".") :
         for each in files :
             if each == '__init__.py' :
-                init = open(each,'r')
+                init = open(root+"/"+each,'r')
                 lines = init.readlines()
                 for index , line in enumerate(lines) :
                     if "from" in line and "." in line and "import" in line :
@@ -37,19 +51,19 @@ def find_init() :
                         for a in api_ :
                             a =  a.replace(' ','')
                             api.append(a)
-                        roots.append(root)
-                        apis.append(api)
-    if len(roots) == 0 :
+                        api = list(set(api))
+                        item = Api(root,api)
+                        API.append(item)
+                init.close()
+    if len(API) == 0 :
         print "Can not find __int__.py"
         sys.exit(0)
-    return roots , apis
+    return API
 
 
 if  __name__ == '__main__' :
-    roots , apis  = find_init()
-    print roots
-    print apis
-    # with open("api/share.py","w+") as fapi :
-    #    static_content()
+    api  = find_init()
+    for each in api :
+        each.generate_api()
 
 
