@@ -4,16 +4,36 @@ import os
 import sys
 import re
 
+class Models() :
+    def __init__(self,path,models) :
+        self.path = path
+        self.models = models
+
+    def get_models(self) :
+
 class Api() :
     def __init__(self,root,api) :
         self.root = root
         self.api = api
 
-    def static_content(self,fapi) :
+    def static_content(self,fapi,api) :
+        api = api+'.py'
         OutputList = \
-            ['from flask import jsonify , g , request , current_app \n',
-            'from .. import                \n',
-            'from .. import db             \n']
+            ['#coding:utf-8\n\n\n',
+            ' \'\'\' ' ,
+            ' ********************************** \n\n ' ,
+            '           ' ,
+            api ,
+            '\n\n',
+            ' **********************************  ' ,
+            '\'\'\' ' ,
+            '\n\n\n' ,
+            'from flask import jsonify , g , request , current_app \n',
+            'from flask_login import current_user\n' ,
+            'from ..models import db \n' ,
+            'import json\n' ,
+            'import request\n'
+             ]
         fapi.writelines(OutputList)
 
     def get_blueprint(self) :
@@ -37,24 +57,84 @@ class Api() :
                             flag += 1
                     self.blue = blue
 
-    def generate_api(self) :
+    def import_models(self,models,fapi) :
+        model = (' , ').join(models.models)
+        Output =  ["from ..models  import " + model+"\n" ]
+        fapi.writelines(Output)
+
+    def import_blueprint(self,fapi) :
+        Output = ["from . import " + self.blue +"\n\n\n\n\n\n"]
+        fapi.writelines(Output)
+
+    def to_get(self,fapi) :
+        Output = ['@'+self.blue+'.route(\' \', methods=[\'GET\'])       \n' ,
+                  'def                                      \n ' ,
+                  '   \'\'\'\n    description of function\n    \'\'\'\n ' ,
+                  '\n\n' ,
+                  '    return jsonify ({ \n\n              }) '  ,
+                  ',    \n\n\n\n' ,
+                  ]
+        fapi.writelines(Output)
+
+    def to_post(self,fapi) :
+        Output = ['@'+self.blue+'.route(\' \', methods=[\'POST\'])       \n' ,
+                  'def                                      \n ' ,
+                  '   \'\'\'\n    description of function\n    \'\'\'\n ' ,
+                  '\n\n' ,
+                  '    db.session.add() \n' ,
+                  '    db.session.commit() \n',
+                  '    return jsonify ({ \n\n              }) '  ,
+                  ',    \n\n\n\n' ,
+                  ]
+        fapi.writelines(Output)
+
+    def to_put(self,fapi) :
+        Output = ['@'+self.blue+'.route(\' \', methods=[\'PUT\'])       \n' ,
+                  'def                                      \n ' ,
+                  '   \'\'\'\n    description of function\n    \'\'\'\n ' ,
+                  '\n\n' ,
+                  '    db.session.add() \n' ,
+                  '    db.session.commit() \n',
+                  '    return jsonify ({ \n\n              }) '  ,
+                  ',    \n\n\n\n' ,
+                  ]
+        fapi.writelines(Output)
+
+
+    def to_delete(self,fapi) :
+        Output = ['@'+self.blue+'.route(\' \', methods=[\'DELETE\'])       \n' ,
+                  'def                                      \n ' ,
+                  '   \'\'\'\n    description of function\n    \'\'\'\n ' ,
+                  '\n\n' ,
+                  '    db.session.delete() \n' ,
+                  '    db.session.commit() \n',
+                  '    return jsonify ({ \n\n              }) '  ,
+                  ',    \n\n\n\n' ,
+                  ]
+        fapi.writelines(Output)
+
+
+
+    def generate_api(self,models) :
         root = self.root
         api = self.api
         print root
         for each in root :
             os.chdir(root)
             for item in api :
-                fapi = open(item+".py","w+")
-                self.static_content(fapi)
-                fapi.close()
+                if not os.path.isfile(item+".py") :
+                    fapi = open(item+".py","w+")
+                    self.static_content(fapi,item)
+                    self.import_models(models,fapi)
+                    self.import_blueprint(fapi)
+                    self.to_get(fapi)
+                    self.to_get(fapi)
+                    self.to_post(fapi)
+                    self.to_post(fapi)
+                    self.to_put(fapi)
+                    self.to_delete(fapi)
+                    fapi.close()
 
-class Models() :
-    def __init__(self,path,models) :
-        self.path = path
-        self.models = models
-    def get_models(self) :
-        print self.path
-        print self.models
 
 def find_init() :
     API = []
@@ -86,6 +166,7 @@ def find_init() :
                         item = Api(path,api)
                         API.append(item)
                 init.close()
+
     if len(API) == 0 :
         print "Can not find __int__.py"
         sys.exit(0)
@@ -120,6 +201,7 @@ if  __name__ == '__main__' :
     model = find_models()
     model.get_models()
     for each in api :
-        each.generate_api()
         each.get_blueprint()
+        each.generate_api(model)
+
 
