@@ -9,8 +9,6 @@ class Models() :
         self.path = path
         self.models = models
 
-    def get_models(self) :
-
 class Api() :
     def __init__(self,root,api) :
         self.root = root
@@ -197,9 +195,9 @@ def find_models() :
     return Model
 
 if  __name__ == '__main__' :
+
     api  = find_init()
     model = find_models()
-    model.get_models()
     for each in api :
         each.get_blueprint()
         each.generate_api(model)
