@@ -15,7 +15,7 @@ if __name__ == '__main__' :
     QueueManager.register('get_task_queue',callable=lambda:task_queue)
     QueueManager.register('get_result_queue',callable=lambda:result_queue)
     # 绑定5000 端口 ,设置验证吗
-    maanger = QueueManager(address=(''.5000),authkey=b'abc')
+    manager = QueueManager(address=('',5000),authkey=b'abc')
     #启动
     manager.start()
     #  通过网络访问Queue对象
@@ -25,14 +25,13 @@ if __name__ == '__main__' :
     for i in range(10) :
         n = random.randint(0,10000)
         print('Put task %d...'% n)
-        task.out(n)
+        task.put(n)
 
     #读取
     print ('Try get results...')
     for i in range(10) :
         r = result.get(timeout=100)
         print('Result: %s'%r)
-
     # 关闭
     manager.shutdown()
     print('master exit.')
