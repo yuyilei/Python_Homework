@@ -10,7 +10,7 @@ class QueueManager(BaseManager) :
 if __name__ == '__main__' :
     QueueManager.register('get_task_queue')
     QueueManager.register('get_result_queue')
-    server_addr = input('input the IPAddress')
+    server_addr = input('input the IPAddress\n')
     print ('Connect to server %s...'% server_addr)
     # 连接到服务器
     m = QueueManager(address=(server_addr,5000),authkey=b'abc')

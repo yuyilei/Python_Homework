@@ -8,9 +8,9 @@ class read(object) :
 
     def sum_up(self) :
         number = self.num
-        while number  :
+        while int(number)  :
             self.sumup += number % 10
-            number /= 10
+            number //=  10
         print ("%d的各位数总和是%d" % (self.num,self.sumup) )
 
     def print_out(self) :
@@ -20,7 +20,7 @@ class read(object) :
         while int(sumup)   :
             index = int((sumup % 10) - 1)
             res.append(num_list[index])
-            sumup /= 10
+            sumup //= 10
         res.reverse()
         out = ' '.join(res)
         print ("%d的拼音是%s" % ( self.sumup,out))
@@ -31,7 +31,7 @@ class read(object) :
         sumup = self.sumup
         while int(sumup)  :
             res.append(str(int(sumup) % tmp))
-            sumup /= tmp
+            sumup //= tmp
         res.reverse()
         out = ''.join(res)
         print ("%d转化为7进制是%s" % (self.sumup, out))
