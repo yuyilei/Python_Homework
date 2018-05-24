@@ -86,24 +86,33 @@ def backtrack_maze(room_list,room,screen) :
     Path.pop()
     room.visited = True
 
-if __name__ == '__main__' :
-    pygame.init()
-    screen=pygame.display.set_mode([screen_size,screen_size])
-    screen.fill(White)
-    room = create_map(room_m,room_n)
+def draw_maze(screen,room) :
     start_point = [0,0]
-    create_maze(room,room[0][0])
     for i in range(room_m) :
         for j in range(room_n) :
             start_point[0] = 25 + i * room_size
             start_point[1] = 25 + j * room_size
             draw_line(screen,start_point,room[i][j].walls,room_size,Black)
-    backtrack_maze(room,room[0][0],screen)
+
+def draw_point() :
     pygame.draw.circle(screen,Red,[25+12,25+12],6,6)
     pygame.draw.circle(screen,Red,[775-12,775-12],6,6)
+
+
+
+if __name__ == '__main__' :
+    pygame.init()
+    screen=pygame.display.set_mode([screen_size,screen_size])
+    screen.fill(White)
+    room = create_map(room_m,room_n)
+    create_maze(room,room[0][0])
+    draw_maze(screen,room)
+    backtrack_maze(room,room[0][0],screen)
+    draw_point()
+
     while True :
         for event in pygame.event.get():
             if event.type==QUIT:
-                break
-        pygame.display.flip()
+                pygame.quit()
+            pygame.display.flip()
     pygame.quit()
